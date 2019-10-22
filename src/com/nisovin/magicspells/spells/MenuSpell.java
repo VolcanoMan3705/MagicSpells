@@ -95,6 +95,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			int optionQuantity = getConfigInt("options." + optionName + ".quantity", 1);
 			List<String> modifierList = getConfigStringList("options." + optionName + ".modifiers", null);
 			boolean optionStayOpen = getConfigBoolean("options." + optionName + ".stay-open", false);
+			boolean optionMovable = getConfigBoolean("options." + optionName + ".movable", false);
 			if (optionSlot >= 0 && !optionSpellName.isEmpty() && optionItem != null) { //TODO flatten this a bit
 				optionItem.setAmount(optionQuantity);
 				Util.setLoreData(optionItem, optionName);
@@ -106,6 +107,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				option.item = optionItem;
 				option.modifierList = modifierList;
 				option.stayOpen = optionStayOpen;
+				option.movable = optionMovable;
 				String optionKey = this.uniqueNames ? getOptionKey(option.item) : optionName;
 				this.options.put(optionKey, option);
 				if (optionSlot > maxSlot) maxSlot = optionSlot;
@@ -219,8 +221,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	
 	@EventHandler
 	public void onInvClick(InventoryClickEvent event) {
-		if (event.getInventory().getTitle().equals(this.title)) {
-			event.setCancelled(true);		
+		if (event.getInventory().getTitle().equals(this.title)) {		
 			if (event.getClick() == ClickType.LEFT) {
 				final Player player = (Player)event.getWhoClicked();
 				String playerName = player.getName();
@@ -248,6 +249,11 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 							}
 						}
 						if (option.stayOpen) close = false;
+						if (option.movable) event.setCancelled(false); {
+						} else {
+							event.setCancelled(true);
+						}
+					         
 					}
 				}
 				
